@@ -9,6 +9,8 @@ CACHE_DIR=$2
 ENV_DIR=$3
 
 PROCFILE=$(cat "${ENV_DIR}/PROCFILE")
+DOKKU_SCALE=$(cat "${ENV_DIR}/DOKKU_SCALE")
+
 
 if [[ -z "${PROCFILE}" ]]; then
     echo "PROCFILE was not set. Aborting" | indent
@@ -23,6 +25,20 @@ if ! [ $? ]; then
 fi
 
 echo "Copied ${PROCFILE} as Procfile successfully" | indent
+
+if [[ -z "${DOKKU_SCALE}" ]]; then
+    echo "DOKKU_SCALE was not set. Aborting" | indent
+    exit 1
+fi
+
+cp "${BUILD_DIR}/${DOKKU_SCALE}" "${BUILD_DIR}/DOKKU_SCALE"
+
+if ! [ $? ]; then
+    echo "FAILED to copy a DOKKU_SCALE" | indent
+    exit 1
+fi
+
+echo "Copied ${DOKKU_SCALE} as DOKKU_SCALE successfully" | indent
 
 APP_DIR=$(dirname "${BUILD_DIR}/${PROCFILE}")
 
